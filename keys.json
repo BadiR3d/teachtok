@@ -1,0 +1,8 @@
+{
+  "envKeys": {
+    "API_DOMAINS": {
+      "questions": "https://cross-platform.rp.devfactory.com/for_you",
+      "answers": "https://cross-platform.rp.devfactory.com/reveal?"
+    }
+  }
+}
