@@ -1,50 +1,53 @@
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ImageBackground,
-  ActivityIndicator,
-} from 'react-native';
+import {View, Text, StyleSheet, ImageBackground} from 'react-native';
 import MCQComponent from '../components/MCQComponent';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const HomeScreen: React.FC = () => {
   const [backgroundImage, setBackgroundImage] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [timeElapsed, setTimeElapsed] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimeElapsed(prevTimeElapsed => prevTimeElapsed + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes < 10 ? '0' : ''}${minutes}:${
+      remainingSeconds < 10 ? '0' : ''
+    }${remainingSeconds}`;
+  };
 
   function handleDataFromChild(imageUrl: string) {
     setBackgroundImage(imageUrl);
-    setLoading(false)
   }
 
-  useEffect(() => {
-    if (!backgroundImage) setLoading(true)
-    else setLoading(false)
-  }, [backgroundImage])
-
   return (
-    <>
-      {!!backgroundImage ? (
-        <ImageBackground
-          source={{uri: backgroundImage || ""}}
-          style={styles.background}>
-          <View style={styles.container}>
-            <View style={styles.header}>
-              <MaterialCommunityIcons name="timer" color="white" size={20} />
-              <Text style={styles.title}>For You</Text>
-              <AntDesign name="search1" color="white" size={20} />
-            </View>
-            <View style={styles.questionContainer}>
-              <MCQComponent sendImageUrl={handleDataFromChild} />
-            </View>
+    <ImageBackground
+      source={{
+        uri: backgroundImage || '../assets/images/education_background.jpeg',
+      }}
+      style={styles.background}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.timerContainer}>
+            <MaterialCommunityIcons name="timer" color="white" size={20} />
+            <Text style={styles.timer}>{formatTime(timeElapsed)}</Text>
           </View>
-        </ImageBackground>
-      ) : (
-        <ActivityIndicator />
-      )}
-    </>
+          <Text style={styles.title}>For You</Text>
+          <AntDesign name="search1" color="white" size={20} />
+        </View>
+        <View style={styles.questionContainer}>
+          <MCQComponent sendImageUrl={handleDataFromChild} />
+        </View>
+      </View>
+    </ImageBackground>
   );
 };
 
@@ -77,6 +80,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  timerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  timer: {
+    color: 'white',
   },
 });
 

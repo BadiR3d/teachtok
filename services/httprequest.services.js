@@ -2,7 +2,7 @@ import { Config } from "../config/config"
 
 const FILE_NAME = 'httprequest.service'
 
-const getQuestions = async () => {
+export const getQuestions = async () => {
   try {
     const prefix = `${FILE_NAME} getQuestions`
 
@@ -16,7 +16,7 @@ const getQuestions = async () => {
   }
 }
 
-const getAnswer = async (questionId) => {
+export const getAnswer = async (questionId) => {
   try {
     const prefix = `${FILE_NAME} getAnswer`
 

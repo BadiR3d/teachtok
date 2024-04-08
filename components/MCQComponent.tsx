@@ -53,7 +53,6 @@ const MCQComponent: React.FC = ({sendImageUrl}) => {
   };
 
   const formatQuestionText = (text: string) => {
-    //fix this
     const words = text.split(' ');
     let lines: JSX.Element[] = [];
     let line: string[] = [];
@@ -74,7 +73,9 @@ const MCQComponent: React.FC = ({sendImageUrl}) => {
               },
             ]}>
             {line.map((word, index) => (
-              <Text key={index}>{word} </Text>
+              <Text style={styles.questionText} key={index}>
+                {word}{' '}
+              </Text>
             ))}
           </View>,
         );
@@ -89,7 +90,9 @@ const MCQComponent: React.FC = ({sendImageUrl}) => {
           key={lineCount}
           style={[styles.line, {borderBottomStartRadius: 5}]}>
           {line.map((word, index) => (
-            <Text key={index}>{word} </Text>
+            <Text style={styles.questionText} key={index}>
+              {word}{' '}
+            </Text>
           ))}
         </View>,
       );
@@ -103,7 +106,7 @@ const MCQComponent: React.FC = ({sendImageUrl}) => {
   const fetchAnswer = async () => {
     try {
       const response = await axios.get(
-        `https://cross-platform.rp.devfactory.com/reveal?id=${question.id}`,
+        `${Config.services.mcq.getAnswer}${question.id}`,
       );
       const correctAnswer = response.data.correct_options[0];
 
@@ -127,11 +130,15 @@ const MCQComponent: React.FC = ({sendImageUrl}) => {
 
   const getOptionStyle = (option: any) => {
     if (selectedOption && option.answer === selectedOption?.answer) {
-      if (selectedOption.answer === correctAnswer?.answer) {
+      if (
+        selectedOption.answer === correctAnswer?.answer ||
+        option.answer === correctAnswer?.answer
+      ) {
         return styles.correctOption;
-      } else {
-        // return [styles.incorrectOption, styles.correctOption];
+      } else if (selectedOption.answer !== correctAnswer?.answer) {
         return styles.incorrectOption;
+      } else {
+        return styles.option;
       }
     }
 
@@ -165,7 +172,7 @@ const MCQComponent: React.FC = ({sendImageUrl}) => {
                   <Text style={styles.optionText}>{option.answer}</Text>
                   {selectedOption &&
                   selectedOption.answer === correctAnswer?.answer ? (
-                    <MovingThumbsIcon thumbDirection="up"/>
+                    <MovingThumbsIcon thumbDirection="up" />
                   ) : selectedOption &&
                     selectedOption.answer !== correctAnswer?.answer ? (
                     <MovingThumbsIcon thumbDirection="down" />
@@ -214,8 +221,9 @@ const styles = StyleSheet.create({
   line: {
     fontSize: 18,
     flexDirection: 'row',
-    backgroundColor: '#e0e0e0',
+    backgroundColor: '#808080BF',
     marginBottom: 10,
+    width: '100%',
     paddingHorizontal: 20,
     borderEndEndRadius: 5,
     borderTopRightRadius: 5,
@@ -255,13 +263,16 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     opacity: 1,
   },
+  questionText: {
+    fontSize: 20,
+  },
   option: {
     width: '90%',
     paddingVertical: 10,
     paddingHorizontal: 20,
     marginVertical: 5,
     borderRadius: 8,
-    backgroundColor: '#e0e0e0', // Default option color
+    backgroundColor: '#e0e0e0BF', // Default option color
   },
   optionText: {
     fontSize: 16,
